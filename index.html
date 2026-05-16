@@ -4,10 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tesouro Direto — Interactive Prototype</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, 'Helvetica Neue', sans-serif; }
-</style>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,'Helvetica Neue',sans-serif}</style>
 </head>
 <body>
 <div id="root"></div>
@@ -17,29 +14,472 @@
 <script type="text/babel">
 const { useState } = React;
 
-const C={navy:"#0A1B3F",navyMid:"#0F2249",navyLight:"#1C3A7A",gold:"#D4A843",goldLight:"#E8C36A",teal:"#00B4A0",tealLight:"#00D4BC",tealPale:"#E6FAF7",green:"#2E9B5F",greenLight:"#38C172",white:"#FFFFFF",g50:"#F7F8FA",g100:"#EEF0F4",g200:"#D8DCE4",g300:"#B0B8C8",g400:"#8892A6",g600:"#4A5568",g800:"#2D3748",red:"#E53E3E",orange:"#DD6B20",blue:"#4A90D9"};
-const anim={animation:"fi .4s ease"};
-const S=`@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}`;
+const C = {
+  navy: "#0A1B3F", navyMid: "#0F2249", navyLight: "#1C3A7A",
+  gold: "#D4A843", goldLight: "#E8C36A",
+  teal: "#00B4A0", tealLight: "#00D4BC", tealPale: "#E6FAF7",
+  green: "#2E9B5F", greenLight: "#38C172",
+  white: "#FFFFFF", g50: "#F7F8FA", g100: "#EEF0F4", g200: "#D8DCE4",
+  g300: "#B0B8C8", g400: "#8892A6", g600: "#4A5568", g800: "#2D3748",
+  red: "#E53E3E", orange: "#DD6B20", blue: "#4A90D9",
+};
 
-function Phone({children}){return <div style={{width:375,height:812,background:C.navy,borderRadius:40,border:"8px solid #111",overflow:"hidden",boxShadow:"0 20px 50px rgba(0,0,0,.2)",display:"flex",flexDirection:"column"}}><style>{S}</style>{children}</div>}
-function Bar(){return <div style={{height:44,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 24px",color:C.white,fontSize:14,fontWeight:600,flexShrink:0}}><span>9:41</span><span style={{fontSize:11}}>●●● 🔋</span></div>}
-function Nav({active,onNav,items}){return <div style={{height:60,background:C.white,borderTop:`1px solid ${C.g100}`,display:"flex",alignItems:"center",justifyContent:"space-around",flexShrink:0}}>{items.map(i=><div key={i.id} onClick={()=>onNav(i.id)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2,cursor:"pointer",color:active===i.id?C.teal:C.g400,fontSize:9,fontWeight:600,flex:1}}><span style={{fontSize:18}}>{i.icon}</span>{i.label}</div>)}</div>}
-function Cd({children,style}){return <div style={{background:C.white,borderRadius:12,padding:"12px 14px",margin:"8px 16px",boxShadow:"0 1px 3px rgba(0,0,0,.05)",...style}}>{children}</div>}
-function Btn({children,onClick,gold,outline}){return <div onClick={onClick} style={{background:gold?C.gold:outline?"transparent":C.teal,color:gold?C.navy:outline?C.g600:C.white,border:outline?`1.5px solid ${C.g200}`:"none",borderRadius:24,padding:"12px 0",fontSize:14,fontWeight:600,textAlign:"center",cursor:"pointer",width:"100%"}}>{children}</div>}
+const anim = { animation: "fi .4s ease" };
+const S = `@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}`;
 
-function Onboarding({onDone}){const[step,setStep]=useState(0);const[a,setA]=useState({});const qs=[{q:"Do you currently save or invest money?",opts:[{id:"no",label:"No, not yet",icon:"🌱"},{id:"poup",label:"Yes, in a savings account (Poupança)",icon:"🏦"},{id:"other",label:"Yes, in other products",icon:"📊"}]},{q:"Are you familiar with terms like CDI, Selic, or CDB?",opts:[{id:"no",label:"Not at all",icon:"🤷"},{id:"heard",label:"I've heard of them but don't fully understand",icon:"🤔"},{id:"yes",label:"Yes, I understand them well",icon:"✅"}]},{q:"What matters most to you?",opts:[{id:"safe",label:"Keep my money safe and simple",icon:"🛡️"},{id:"return",label:"Get the highest returns possible",icon:"📈"}]}];const pick=(v)=>{const na={...a,[step]:v};setA(na);if(step<2)setTimeout(()=>setStep(step+1),250);else{const informed=na[1]==="yes"&&na[2]==="return";setTimeout(()=>onDone(informed?"info":"init"),300)}};const q=qs[step];return(<div style={{flex:1,display:"flex",flexDirection:"column",padding:24,justifyContent:"center",...anim}}><div style={{display:"flex",gap:6,justifyContent:"center",marginBottom:28}}>{[0,1,2].map(i=><div key={i} style={{width:i===step?20:7,height:4,borderRadius:2,background:i<=step?C.gold:"rgba(255,255,255,.15)",transition:"all .3s"}}/>)}</div><div style={{textAlign:"center",marginBottom:24}}>{step===0&&<div style={{fontSize:26,marginBottom:8}}>👋</div>}{step===0&&<div style={{fontSize:18,fontWeight:700,color:C.white,marginBottom:4}}>Welcome to Tesouro Direto!</div>}<div style={{fontSize:14,color:C.white,fontWeight:600,lineHeight:1.4}}>{q.q}</div></div><div style={{display:"flex",flexDirection:"column",gap:8}}>{q.opts.map(o=><div key={o.id} onClick={()=>pick(o.id)} style={{display:"flex",alignItems:"center",gap:10,padding:"13px 14px",background:a[step]===o.id?"rgba(212,168,67,.12)":"rgba(255,255,255,.05)",border:`1.5px solid ${a[step]===o.id?C.gold:"rgba(255,255,255,.08)"}`,borderRadius:12,cursor:"pointer",transition:"all .2s"}}><span style={{fontSize:20}}>{o.icon}</span><span style={{fontSize:13,color:C.white}}>{o.label}</span></div>)}</div></div>)}
+function Phone({ children }) {
+  return <div style={{ width: 375, height: 812, background: C.navy, borderRadius: 40, border: "8px solid #111", overflow: "hidden", boxShadow: "0 20px 50px rgba(0,0,0,.2)", display: "flex", flexDirection: "column" }}><style>{S}</style>{children}</div>;
+}
+function Bar() {
+  return <div style={{ height: 44, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 24px", color: C.white, fontSize: 14, fontWeight: 600, flexShrink: 0 }}><span>9:41</span><span style={{ fontSize: 11 }}>●●● 🔋</span></div>;
+}
+function Nav({ active, onNav, items }) {
+  return <div style={{ height: 60, background: C.white, borderTop: `1px solid ${C.g100}`, display: "flex", alignItems: "center", justifyContent: "space-around", flexShrink: 0 }}>{items.map(i => <div key={i.id} onClick={() => onNav(i.id)} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, cursor: "pointer", color: active === i.id ? C.teal : C.g400, fontSize: 9, fontWeight: 600, flex: 1 }}><span style={{ fontSize: 18 }}>{i.icon}</span>{i.label}</div>)}</div>;
+}
+function Cd({ children, style }) {
+  return <div style={{ background: C.white, borderRadius: 12, padding: "12px 14px", margin: "8px 16px", boxShadow: "0 1px 3px rgba(0,0,0,.05)", ...style }}>{children}</div>;
+}
+function Btn({ children, onClick, gold, outline }) {
+  return <div onClick={onClick} style={{ background: gold ? C.gold : outline ? "transparent" : C.teal, color: gold ? C.navy : outline ? C.g600 : C.white, border: outline ? `1.5px solid ${C.g200}` : "none", borderRadius: 24, padding: "12px 0", fontSize: 14, fontWeight: 600, textAlign: "center", cursor: "pointer", width: "100%" }}>{children}</div>;
+}
 
-function Welcome({seg,onContinue}){const isInit=seg==="init";return(<div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"0 28px",textAlign:"center",...anim}}><div style={{fontSize:20,fontWeight:700,color:C.gold,letterSpacing:-.3,marginBottom:4}}>TESOURO DIRETO</div><div style={{width:50,height:3,background:C.gold,borderRadius:2,marginBottom:20}}/>{isInit?<><div style={{fontSize:18,fontWeight:700,color:C.white,lineHeight:1.3,marginBottom:16}}>Start saving and watch your money grow every day</div><div style={{display:"flex",flexDirection:"column",gap:10,width:"100%",marginBottom:24}}>{[{icon:"🛡️",text:"Backed by the Federal Government"},{icon:"💸",text:"Withdraw anytime — start from R$ 1"},{icon:"📈",text:"Earns more than savings accounts"}].map((v,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",background:"rgba(255,255,255,.06)",borderRadius:10}}><span style={{fontSize:18}}>{v.icon}</span><span style={{fontSize:13,color:C.white,textAlign:"left"}}>{v.text}</span></div>)}</div></>:<><div style={{fontSize:18,fontWeight:700,color:C.white,lineHeight:1.3,marginBottom:16}}>Returns linked to Selic, protected from inflation</div><div style={{display:"flex",flexDirection:"column",gap:10,width:"100%",marginBottom:24}}>{[{icon:"📈",text:"Directly linked to the Selic rate — 14.75% p.a."},{icon:"🛡️",text:"IPCA+ options protect your returns from inflation"},{icon:"🏦",text:"One platform to manage TD across all your banks"},{icon:"⚡",text:"One-click invest & withdraw via Pix"}].map((v,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",background:"rgba(255,255,255,.06)",borderRadius:10}}><span style={{fontSize:18}}>{v.icon}</span><span style={{fontSize:13,color:C.white,textAlign:"left"}}>{v.text}</span></div>)}</div></>}<div style={{width:"100%"}}><Btn gold onClick={onContinue}>{isInit?"Start saving":"Go to my portfolio"}</Btn></div><div style={{fontSize:10,color:C.g400,marginTop:8}}>made by [B]³</div></div>)}
+// ======= ONBOARDING (3 questions) =======
+function Onboarding({ onDone }) {
+  const [step, setStep] = useState(0);
+  const [a, setA] = useState({});
+  const qs = [
+    { q: "Do you currently save or invest money?", opts: [
+      { id: "no", label: "No, not yet", icon: "🌱" },
+      { id: "poup", label: "Yes, in a savings account (Poupança)", icon: "🏦" },
+      { id: "other", label: "Yes, in other products", icon: "📊" },
+    ]},
+    { q: "Are you familiar with terms like CDI, Selic, or CDB?", opts: [
+      { id: "no", label: "Not at all", icon: "🤷" },
+      { id: "heard", label: "I've heard of them but don't fully understand", icon: "🤔" },
+      { id: "yes", label: "Yes, I understand them well", icon: "✅" },
+    ]},
+    { q: "What matters most to you?", opts: [
+      { id: "safe", label: "Keep my money safe and simple", icon: "🛡️" },
+      { id: "return", label: "Get the highest returns possible", icon: "📈" },
+    ]},
+  ];
+  const pick = (v) => {
+    const na = { ...a, [step]: v };
+    setA(na);
+    if (step < 2) setTimeout(() => setStep(step + 1), 250);
+    else {
+      const informed = na[1] === "yes" && na[2] === "return";
+      setTimeout(() => onDone(informed ? "info" : "init"), 300);
+    }
+  };
+  const q = qs[step];
+  
+  // Piggy bank + treasure chest banner SVG
+  const Banner = () => (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "16px 0 8px", flexShrink: 0 }}>
+      <svg width="260" height="140" viewBox="0 0 260 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Gold accent line */}
+        <rect x="30" y="0" width="200" height="3" rx="1.5" fill={C.gold} opacity=".5"/>
+        {/* Treasure chest */}
+        <rect x="30" y="60" width="100" height="55" rx="6" fill="#8B6914"/>
+        <rect x="32" y="62" width="96" height="51" rx="5" fill="#7A5C10" opacity=".7"/>
+        <rect x="30" y="46" width="100" height="20" rx="6" fill="#A67C1A"/>
+        <rect x="32" y="48" width="96" height="16" rx="5" fill="#B8891E" opacity=".6"/>
+        {/* Chest straps */}
+        <rect x="55" y="46" width="4" height="69" rx="2" fill="#6B4E0D" opacity=".4"/>
+        <rect x="101" y="46" width="4" height="69" rx="2" fill="#6B4E0D" opacity=".4"/>
+        {/* Lock */}
+        <circle cx="80" cy="82" r="8" fill={C.gold}/>
+        <rect x="76" y="80" width="8" height="12" rx="2" fill="#8B6914"/>
+        <path d="M73 79 Q73 70 80 70 Q87 70 87 79" stroke={C.gold} strokeWidth="2.5" fill="none"/>
+        {/* Coins peeking out */}
+        <circle cx="48" cy="56" r="7" fill={C.gold} opacity=".8"/>
+        <circle cx="62" cy="52" r="6" fill="#E8C36A" opacity=".7"/>
+        <circle cx="100" cy="54" r="5" fill={C.gold} opacity=".6"/>
+        {/* Piggy bank */}
+        <ellipse cx="190" cy="86" rx="38" ry="30" fill="#F4A261"/>
+        <ellipse cx="190" cy="86" rx="33" ry="25" fill="#F8B476"/>
+        {/* Belly highlight */}
+        <ellipse cx="185" cy="90" rx="18" ry="14" fill="#FACB8E" opacity=".5"/>
+        {/* Snout */}
+        <ellipse cx="222" cy="84" rx="10" ry="8" fill="#E8956C"/>
+        <circle cx="219" cy="81" r="2" fill="#C07850"/>
+        <circle cx="225" cy="81" r="2" fill="#C07850"/>
+        {/* Eye */}
+        <circle cx="210" cy="72" r="3.5" fill="#2D3748"/>
+        <circle cx="209" cy="71" r="1.5" fill="white"/>
+        {/* Ears */}
+        <ellipse cx="178" cy="58" rx="8" ry="11" fill="#F4A261" transform="rotate(-15 178 58)"/>
+        <ellipse cx="175" cy="59" rx="5" ry="8" fill="#E8956C" transform="rotate(-15 175 59)"/>
+        <ellipse cx="198" cy="55" rx="8" ry="11" fill="#F4A261" transform="rotate(10 198 55)"/>
+        <ellipse cx="196" cy="56" rx="5" ry="8" fill="#E8956C" transform="rotate(10 196 56)"/>
+        {/* Coin slot */}
+        <rect x="183" y="56" width="14" height="3.5" rx="1.75" fill="#C07850"/>
+        {/* Legs */}
+        <rect x="166" y="110" width="8" height="12" rx="4" fill="#E8956C"/>
+        <rect x="180" y="112" width="8" height="10" rx="4" fill="#E8956C"/>
+        <rect x="196" y="112" width="8" height="10" rx="4" fill="#E8956C"/>
+        <rect x="210" y="110" width="8" height="12" rx="4" fill="#E8956C"/>
+        {/* Tail */}
+        <path d="M153 78 Q144 68 148 60" stroke="#F4A261" strokeWidth="3.5" fill="none" strokeLinecap="round"/>
+        {/* Sparkles */}
+        <circle cx="140" cy="40" r="2" fill={C.gold} opacity=".6"/>
+        <circle cx="230" cy="50" r="1.5" fill={C.gold} opacity=".5"/>
+        <circle cx="50" cy="35" r="1.5" fill={C.gold} opacity=".4"/>
+      </svg>
+    </div>
+  );
 
-function InitHome(){const[calcAmt,setCalcAmt]=useState(100);const projected=Math.round(calcAmt*1.1475);return(<div style={{flex:1,overflowY:"auto",...anim}}><div style={{padding:"12px 20px 16px"}}><div style={{fontSize:12,color:C.g300}}>Hi, Ana 👋</div><div style={{background:C.navyMid,border:`1.5px solid ${C.gold}`,borderRadius:12,padding:"14px 16px",marginTop:8}}><div style={{fontSize:11,color:C.g300}}>Your money saved</div><div style={{fontSize:30,fontWeight:700,color:C.white,letterSpacing:-1}}>R$ 2,038.51</div><div style={{display:"flex",alignItems:"center",gap:6,marginTop:4}}><span style={{fontSize:12}}>📈</span><span style={{fontSize:12,color:C.green,fontWeight:600}}>Total earnings: R$ 38.51</span></div></div><div style={{display:"flex",gap:8,marginTop:10}}><Btn gold>Save money</Btn><Btn outline>Withdraw</Btn></div><div style={{display:"flex",gap:6,marginTop:10,justifyContent:"center",flexWrap:"wrap"}}>{["🛡️ Govt. guaranteed","💸 Withdraw anytime","🪙 From R$1"].map((b,i)=><span key={i} style={{fontSize:9,color:C.tealLight,padding:"3px 8px",background:"rgba(0,180,160,.1)",borderRadius:10}}>{b}</span>)}</div></div><div style={{background:C.white,borderRadius:"16px 16px 0 0",padding:"16px 0",minHeight:400}}><div style={{padding:"0 16px",marginBottom:14}}><div style={{fontSize:14,fontWeight:700,color:C.navy,marginBottom:8}}>What are you saving for?</div><div style={{display:"flex",gap:6,flexWrap:"wrap"}}>{[{e:"🏖️",l:"Vacation"},{e:"🚨",l:"Emergency"},{e:"🎓",l:"Education"},{e:"🏠",l:"Housing"},{e:"💍",l:"Wedding"},{e:"👶",l:"Retirement"}].map((g,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:4,padding:"8px 12px",background:C.g50,border:`1px solid ${C.g100}`,borderRadius:20,cursor:"pointer",fontSize:12,color:C.navy,fontWeight:500}}><span>{g.e}</span>{g.l}</div>)}</div></div><Cd><div style={{fontSize:13,fontWeight:700,color:C.navy,marginBottom:8}}>How much could your money grow?</div><div style={{fontSize:11,color:C.g400,marginBottom:8}}>If you invest R$ {calcAmt} today for 12 months:</div><input type="range" min={50} max={1000} step={50} value={calcAmt} onChange={e=>setCalcAmt(Number(e.target.value))} style={{width:"100%",accentColor:C.teal}}/><div style={{display:"flex",justifyContent:"space-between",fontSize:10,color:C.g400,marginBottom:10}}><span>R$ 50</span><span>R$ 1,000</span></div><div style={{position:"relative",height:80,marginBottom:6}}><svg width="100%" height="80" viewBox="0 0 300 80" preserveAspectRatio="none"><defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#00B4A0" stopOpacity=".2"/><stop offset="100%" stopColor="#00B4A0" stopOpacity=".02"/></linearGradient></defs><path d="M0,70 C50,68 100,60 150,48 C200,36 250,20 300,8 L300,80 L0,80Z" fill="url(#ag)"/><polyline points="0,70 50,68 100,60 150,48 200,36 250,20 300,8" fill="none" stroke={C.teal} strokeWidth="2"/><circle cx="0" cy="70" r="3" fill={C.teal}/><circle cx="300" cy="8" r="4" fill={C.teal}/></svg><div style={{position:"absolute",left:0,bottom:0,fontSize:9,color:C.g400}}>Today</div><div style={{position:"absolute",right:0,bottom:0,fontSize:9,color:C.g400}}>12 months</div></div><div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}><div><div style={{fontSize:10,color:C.g400}}>You invest</div><div style={{fontSize:16,fontWeight:700,color:C.navy}}>R$ {calcAmt}</div></div><div style={{fontSize:18,color:C.teal}}>→</div><div style={{textAlign:"right"}}><div style={{fontSize:10,color:C.g400}}>You'll have</div><div style={{fontSize:20,fontWeight:700,color:C.teal}}>R$ {projected}</div></div></div><div style={{fontSize:9,color:C.g400,textAlign:"center",marginTop:6}}>Based on Selic 14.75% p.a. · Inflation-adjusted</div></Cd><Cd><div style={{fontSize:13,fontWeight:700,color:C.navy,marginBottom:6}}>Tesouro Reserva vs Poupança</div><div style={{display:"flex",gap:8}}><div style={{flex:1,padding:10,background:C.tealPale,borderRadius:8,textAlign:"center"}}><div style={{fontSize:10,color:C.g600}}>Tesouro Reserva</div><div style={{fontSize:18,fontWeight:700,color:C.teal}}>+8.4%</div><div style={{fontSize:9,color:C.g400}}>real return / year</div></div><div style={{flex:1,padding:10,background:C.g50,borderRadius:8,textAlign:"center"}}><div style={{fontSize:10,color:C.g600}}>Poupança</div><div style={{fontSize:18,fontWeight:700,color:C.red}}>−2.4%</div><div style={{fontSize:9,color:C.g400}}>real return / year</div></div></div><div style={{textAlign:"center",fontSize:10,color:C.teal,fontWeight:600,marginTop:6}}>Safer · Higher returns · Same liquidity</div></Cd><div style={{height:70}}/></div></div>)}
+  return (
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", ...anim }}>
+      {step === 0 && <Banner />}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", padding: "0 24px 24px", justifyContent: step === 0 ? "flex-start" : "center" }}>
+        <div style={{ display: "flex", gap: 6, justifyContent: "center", marginBottom: step === 0 ? 16 : 28 }}>
+          {[0,1,2].map(i => <div key={i} style={{ width: i === step ? 20 : 7, height: 4, borderRadius: 2, background: i <= step ? C.gold : "rgba(255,255,255,.15)", transition: "all .3s" }}/>)}
+        </div>
+        <div style={{ textAlign: "center", marginBottom: 20 }}>
+          {step === 0 && <div style={{ fontSize: 18, fontWeight: 700, color: C.white, marginBottom: 4 }}>Welcome to Tesouro Direto!</div>}
+          <div style={{ fontSize: 14, color: C.white, fontWeight: 600, lineHeight: 1.4 }}>{q.q}</div>
+        </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        {q.opts.map(o => <div key={o.id} onClick={() => pick(o.id)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "13px 14px", background: a[step] === o.id ? "rgba(212,168,67,.12)" : "rgba(255,255,255,.05)", border: `1.5px solid ${a[step] === o.id ? C.gold : "rgba(255,255,255,.08)"}`, borderRadius: 12, cursor: "pointer", transition: "all .2s" }}><span style={{ fontSize: 20 }}>{o.icon}</span><span style={{ fontSize: 13, color: C.white }}>{o.label}</span></div>)}
+      </div>
+      </div>
+    </div>
+  );
+}
 
-function InfoHome(){return(<div style={{flex:1,overflowY:"auto",...anim}}><div style={{padding:"12px 20px 16px"}}><div style={{fontSize:12,color:C.g300}}>Hi, Carlos 👋</div><div style={{background:C.navyMid,border:`1.5px solid ${C.gold}`,borderRadius:12,padding:"14px 16px",marginTop:8}}><div style={{fontSize:11,color:C.g300}}>Total Tesouro Direto portfolio</div><div style={{fontSize:30,fontWeight:700,color:C.white,letterSpacing:-1}}>R$ 45,520.00</div><div style={{display:"flex",alignItems:"center",gap:6,marginTop:4}}><span style={{fontSize:12}}>📈</span><span style={{fontSize:12,color:C.green,fontWeight:600}}>+8.42% real (12 months)</span></div></div><div style={{display:"flex",gap:8,marginTop:10}}><Btn gold>Invest</Btn><Btn outline>Withdraw</Btn></div></div><div style={{background:C.white,borderRadius:"16px 16px 0 0",padding:"16px 0",minHeight:400}}><Cd><div style={{fontSize:13,fontWeight:700,color:C.navy,marginBottom:8}}>Portfolio across channels</div><div style={{display:"flex",alignItems:"center",gap:16}}><svg width="100" height="100" viewBox="0 0 42 42"><circle cx="21" cy="21" r="15.9" fill="none" stroke={C.teal} strokeWidth="5" strokeDasharray="40 60" strokeDashoffset="25"/><circle cx="21" cy="21" r="15.9" fill="none" stroke={C.blue} strokeWidth="5" strokeDasharray="35 65" strokeDashoffset="85"/><circle cx="21" cy="21" r="15.9" fill="none" stroke={C.gold} strokeWidth="5" strokeDasharray="25 75" strokeDashoffset="50"/></svg><div style={{flex:1}}>{[{label:"TD App (direct)",amt:"R$ 18,200",pct:"40%",color:C.teal},{label:"via Nubank",amt:"R$ 15,820",pct:"35%",color:C.blue},{label:"via XP",amt:"R$ 11,500",pct:"25%",color:C.gold}].map((ch,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}><div style={{width:8,height:8,borderRadius:2,background:ch.color,flexShrink:0}}/><div style={{flex:1}}><div style={{fontSize:11,fontWeight:600,color:C.navy}}>{ch.label}</div><div style={{fontSize:10,color:C.g400}}>{ch.amt} · {ch.pct}</div></div></div>)}</div></div></Cd><Cd><div style={{fontSize:13,fontWeight:700,color:C.navy,marginBottom:6}}>12-month real returns</div>{[{l:"Tesouro Reserva",v:"+8.42%",c:C.teal,w:"90%"},{l:"CDB 100% CDI",v:"+5.18%",c:C.blue,w:"65%"},{l:"Nubank Caixinha",v:"+4.80%",c:C.gold,w:"60%"},{l:"Poupança",v:"−2.40%",c:C.g300,w:"20%"}].map((b,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:6,marginBottom:5}}><div style={{width:80,fontSize:10,color:C.g600,textAlign:"right"}}>{b.l}</div><div style={{flex:1,height:14,background:C.g100,borderRadius:3,overflow:"hidden"}}><div style={{height:"100%",width:b.w,background:b.c,borderRadius:3}}/></div><div style={{width:48,fontSize:10,fontWeight:700,color:b.c,textAlign:"right"}}>{b.v}</div></div>)}<div style={{fontSize:8,color:C.g400,textAlign:"center",marginTop:4}}>Real values · After tax · Last 12 months</div></Cd><Cd style={{background:C.tealPale,border:"1px solid rgba(0,180,160,.12)"}}><div style={{display:"flex",alignItems:"center",gap:6}}><span style={{fontSize:16}}>💡</span><div style={{fontSize:12,fontWeight:700,color:C.navy}}>Opportunity detected</div></div><div style={{fontSize:11,color:C.g600,lineHeight:1.4,marginTop:4}}>Your Nubank account has R$ 890 surplus. Investing R$ 400 would earn ~R$ 4.70/mo at current Selic.</div><div style={{display:"flex",gap:8,marginTop:8}}><div style={{flex:1}}><Btn>Invest R$ 400</Btn></div><div style={{padding:"10px 12px",fontSize:12,color:C.g400,cursor:"pointer"}}>Not now</div></div></Cd><div style={{height:70}}/></div></div>)}
+// ======= WELCOME PAGE =======
+function Welcome({ seg, onContinue }) {
+  const isInit = seg === "init";
+  return (
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "0 28px", textAlign: "center", ...anim }}>
+      <div style={{ fontSize: 20, fontWeight: 700, color: C.gold, letterSpacing: -.3, marginBottom: 4 }}>TESOURO DIRETO</div>
+      <div style={{ width: 50, height: 3, background: C.gold, borderRadius: 2, marginBottom: 20 }}/>
+      {isInit ? (<>
+        <div style={{ fontSize: 18, fontWeight: 700, color: C.white, lineHeight: 1.3, marginBottom: 16 }}>Start saving and watch your money grow every day</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%", marginBottom: 24 }}>
+          {[
+            { icon: "🛡️", text: "Backed by the Federal Government" },
+            { icon: "💸", text: "Withdraw anytime — start from R$ 1" },
+            { icon: "📈", text: "Earns more than savings accounts" },
+          ].map((v, i) => <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "rgba(255,255,255,.06)", borderRadius: 10 }}><span style={{ fontSize: 18 }}>{v.icon}</span><span style={{ fontSize: 13, color: C.white, textAlign: "left" }}>{v.text}</span></div>)}
+        </div>
+      </>) : (<>
+        <div style={{ fontSize: 18, fontWeight: 700, color: C.white, lineHeight: 1.3, marginBottom: 16 }}>Returns linked to Selic, protected from inflation</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%", marginBottom: 24 }}>
+          {[
+            { icon: "📈", text: "Directly linked to the Selic rate — 14.75% p.a." },
+            { icon: "🛡️", text: "IPCA+ options protect your returns from inflation" },
+            { icon: "🏦", text: "One platform to manage TD across all your banks" },
+            { icon: "⚡", text: "One-click invest & withdraw via Pix" },
+          ].map((v, i) => <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "rgba(255,255,255,.06)", borderRadius: 10 }}><span style={{ fontSize: 18 }}>{v.icon}</span><span style={{ fontSize: 13, color: C.white, textAlign: "left" }}>{v.text}</span></div>)}
+        </div>
+      </>)}
+      <div style={{ width: "100%" }}><Btn gold onClick={onContinue}>{isInit ? "Start saving" : "Go to my portfolio"}</Btn></div>
+      <div style={{ fontSize: 10, color: C.g400, marginTop: 8 }}>made by [B]³</div>
+    </div>
+  );
+}
 
-function Boxes({seg}){const isInit=seg==="init";const boxes=isInit?[{name:"Trip to Bahia",emoji:"🏖️",bg:"#FFF5E6",goal:3000,cur:1860,auto:150,pct:62,days:"~8 mo",color:C.teal},{name:"Emergency Fund",emoji:"🚨",bg:"#FFE8E8",goal:5000,cur:1912,auto:200,pct:38,days:"~15 mo",color:C.orange},{name:"English Course",emoji:"🎓",bg:"#E8F4FF",goal:1500,cur:1275,auto:100,pct:85,days:"~2 mo",color:C.green}]:[{name:"Emergency Fund",emoji:"🚨",bond:"Tesouro Selic",yield:"14.75% p.a.",goal:15000,cur:8420,pct:56,color:C.teal},{name:"IPCA+ 2029",emoji:"📊",bond:"IPCA+ 2029",yield:"IPCA+6.8%",goal:50000,cur:22300,pct:45,color:C.blue},{name:"Europe Trip",emoji:"✈️",bond:"Tesouro Selic",yield:"14.75% p.a.",goal:20000,cur:14800,pct:74,color:C.green}];return(<div style={{flex:1,overflowY:"auto",...anim}}><div style={{padding:"8px 20px 10px"}}><div style={{fontSize:12,color:C.g300}}>{isInit?"Your goals · earning every day":"Your allocations"}</div></div><div style={{background:C.white,borderRadius:"16px 16px 0 0",padding:"12px 16px",minHeight:400}}>{boxes.map((b,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:12,border:`1px solid ${C.g100}`,borderRadius:12,marginBottom:8}}><div style={{width:38,height:38,borderRadius:10,background:b.bg||C.g50,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>{b.emoji}</div><div style={{flex:1}}><div style={{display:"flex",justifyContent:"space-between"}}><span style={{fontSize:12,fontWeight:600,color:C.navy}}>{b.name}</span><span style={{fontSize:9,fontWeight:600,color:b.color}}>{b.days||b.yield}</span></div>{isInit?<div style={{fontSize:9,color:C.g400}}>Goal: R$ {b.goal.toLocaleString()} · Auto: R$ {b.auto}/mo</div>:<div style={{fontSize:9,color:C.g400}}>{b.bond} · Goal: R$ {b.goal.toLocaleString()}</div>}<div style={{height:3,background:C.g100,borderRadius:2,marginTop:5,overflow:"hidden"}}><div style={{height:"100%",width:`${b.pct}%`,background:b.color,borderRadius:2}}/></div><div style={{display:"flex",justifyContent:"space-between",marginTop:2}}><span style={{fontSize:11,fontWeight:600,color:C.navy}}>R$ {b.cur.toLocaleString()}</span><span style={{fontSize:10,color:C.g400}}>{b.pct}%</span></div></div></div>)}<div style={{padding:12,border:`2px dashed ${C.g200}`,borderRadius:12,fontSize:12,fontWeight:600,color:C.teal,textAlign:"center",cursor:"pointer"}}>+ Create new {isInit?"goal":"allocation"}</div><div style={{height:70}}/></div></div>)}
+// ======= INICIANTE HOME =======
+function InitHome() {
+  const [calcAmt, setCalcAmt] = useState(100);
+  const projected = Math.round(calcAmt * 1.1475);
+  return (
+    <div style={{ flex: 1, overflowY: "auto", ...anim }}>
+      <div style={{ padding: "12px 20px 16px" }}>
+        <div style={{ fontSize: 12, color: C.g300 }}>Hi, Ana 👋</div>
+        <div style={{ background: C.navyMid, border: `1.5px solid ${C.gold}`, borderRadius: 12, padding: "14px 16px", marginTop: 8 }}>
+          <div style={{ fontSize: 11, color: C.g300 }}>Your money saved</div>
+          <div style={{ fontSize: 30, fontWeight: 700, color: C.white, letterSpacing: -1 }}>R$ 2,038.51</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
+            <span style={{ fontSize: 12 }}>📈</span>
+            <span style={{ fontSize: 12, color: C.green, fontWeight: 600 }}>Total earnings: R$ 38.51</span>
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+          <Btn gold>Save money</Btn>
+          <Btn outline>Withdraw</Btn>
+        </div>
+        <div style={{ display: "flex", gap: 6, marginTop: 10, justifyContent: "center", flexWrap: "wrap" }}>
+          {["🛡️ Govt. guaranteed", "💸 Withdraw anytime", "🪙 From R$1"].map((b, i) => <span key={i} style={{ fontSize: 9, color: C.tealLight, padding: "3px 8px", background: "rgba(0,180,160,.1)", borderRadius: 10 }}>{b}</span>)}
+        </div>
+      </div>
+      <div style={{ background: C.white, borderRadius: "16px 16px 0 0", padding: "16px 0", minHeight: 400 }}>
+        <div style={{ padding: "0 16px", marginBottom: 14 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, marginBottom: 8 }}>What are you saving for?</div>
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {[{e:"🏖️",l:"Vacation"},{e:"🚨",l:"Emergency"},{e:"🎓",l:"Education"},{e:"🏠",l:"Housing"},{e:"💍",l:"Wedding"},{e:"👶",l:"Retirement"}].map((g,i) => <div key={i} style={{ display: "flex", alignItems: "center", gap: 4, padding: "8px 12px", background: C.g50, border: `1px solid ${C.g100}`, borderRadius: 20, cursor: "pointer", fontSize: 12, color: C.navy, fontWeight: 500 }}><span>{g.e}</span>{g.l}</div>)}
+          </div>
+        </div>
+        <Cd>
+          <div style={{ fontSize: 13, fontWeight: 700, color: C.navy, marginBottom: 8 }}>How much could your money grow?</div>
+          <div style={{ fontSize: 11, color: C.g400, marginBottom: 8 }}>If you invest R$ {calcAmt} today for 12 months:</div>
+          <input type="range" min={50} max={1000} step={50} value={calcAmt} onChange={e => setCalcAmt(Number(e.target.value))} style={{ width: "100%", accentColor: C.teal }} />
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: C.g400, marginBottom: 10 }}><span>R$ 50</span><span>R$ 1,000</span></div>
+          <div style={{ position: "relative", height: 80, marginBottom: 6 }}>
+            <svg width="100%" height="80" viewBox="0 0 300 80" preserveAspectRatio="none">
+              <defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#00B4A0" stopOpacity=".2"/><stop offset="100%" stopColor="#00B4A0" stopOpacity=".02"/></linearGradient></defs>
+              <path d="M0,70 C50,68 100,60 150,48 C200,36 250,20 300,8 L300,80 L0,80Z" fill="url(#ag)"/>
+              <polyline points="0,70 50,68 100,60 150,48 200,36 250,20 300,8" fill="none" stroke={C.teal} strokeWidth="2"/>
+              <circle cx="0" cy="70" r="3" fill={C.teal}/><circle cx="300" cy="8" r="4" fill={C.teal}/>
+            </svg>
+            <div style={{ position: "absolute", left: 0, bottom: 0, fontSize: 9, color: C.g400 }}>Today</div>
+            <div style={{ position: "absolute", right: 0, bottom: 0, fontSize: 9, color: C.g400 }}>12 months</div>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div><div style={{ fontSize: 10, color: C.g400 }}>You invest</div><div style={{ fontSize: 16, fontWeight: 700, color: C.navy }}>R$ {calcAmt}</div></div>
+            <div style={{ fontSize: 18, color: C.teal }}>→</div>
+            <div style={{ textAlign: "right" }}><div style={{ fontSize: 10, color: C.g400 }}>You'll have</div><div style={{ fontSize: 20, fontWeight: 700, color: C.teal }}>R$ {projected}</div></div>
+          </div>
+          <div style={{ fontSize: 9, color: C.g400, textAlign: "center", marginTop: 6 }}>Based on Selic 14.75% p.a. · Inflation-adjusted</div>
+        </Cd>
+        <Cd>
+          <div style={{ fontSize: 13, fontWeight: 700, color: C.navy, marginBottom: 6 }}>Tesouro Reserva vs Poupança</div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <div style={{ flex: 1, padding: 10, background: C.tealPale, borderRadius: 8, textAlign: "center" }}>
+              <div style={{ fontSize: 10, color: C.g600 }}>Tesouro Reserva</div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: C.teal }}>+8.4%</div>
+              <div style={{ fontSize: 9, color: C.g400 }}>real return / year</div>
+            </div>
+            <div style={{ flex: 1, padding: 10, background: C.g50, borderRadius: 8, textAlign: "center" }}>
+              <div style={{ fontSize: 10, color: C.g600 }}>Poupança</div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: C.red }}>−2.4%</div>
+              <div style={{ fontSize: 9, color: C.g400 }}>real return / year</div>
+            </div>
+          </div>
+          <div style={{ textAlign: "center", fontSize: 10, color: C.teal, fontWeight: 600, marginTop: 6 }}>Safer · Higher returns · Same liquidity</div>
+        </Cd>
+        <div style={{ height: 70 }}/>
+      </div>
+    </div>
+  );
+}
 
-function Learn(){return(<div style={{flex:1,overflowY:"auto",...anim}}><div style={{padding:"8px 20px 10px"}}><div style={{fontSize:14,fontWeight:700,color:C.white}}>Learning Center</div></div><div style={{background:C.white,borderRadius:"16px 16px 0 0",padding:"16px 0",minHeight:400}}><div style={{padding:"0 16px",marginBottom:16}}><div style={{fontSize:14,fontWeight:700,color:C.navy,marginBottom:8}}>Watch & learn</div><div style={{display:"flex",gap:8,overflowX:"auto"}}>{[{title:"What is Tesouro Direto?",author:"Primo Rico",dur:"4:32",color:"#1a1a2e"},{title:"TD vs Poupança explained",author:"Nath Finanças",dur:"3:15",color:"#162447"},{title:"How the Selic Rate works",author:"Me Poupe!",dur:"5:08",color:"#1b2838"}].map((v,i)=><div key={i} style={{minWidth:150,borderRadius:10,overflow:"hidden",flexShrink:0,cursor:"pointer"}}><div style={{height:85,background:v.color,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",position:"relative"}}><div style={{width:32,height:32,borderRadius:16,background:"rgba(255,255,255,.2)",display:"flex",alignItems:"center",justifyContent:"center"}}><div style={{width:0,height:0,borderLeft:"10px solid white",borderTop:"6px solid transparent",borderBottom:"6px solid transparent",marginLeft:2}}/></div><div style={{position:"absolute",bottom:4,right:6,fontSize:9,color:C.white,background:"rgba(0,0,0,.6)",padding:"1px 4px",borderRadius:3}}>{v.dur}</div></div><div style={{padding:"6px 8px",background:C.g50}}><div style={{fontSize:10,fontWeight:600,color:C.navy,lineHeight:1.3}}>{v.title}</div><div style={{fontSize:9,color:C.g400,marginTop:2}}>{v.author}</div></div></div>)}</div></div><div style={{padding:"0 16px",marginBottom:16}}><div style={{fontSize:14,fontWeight:700,color:C.navy,marginBottom:8}}>30-second concepts</div>{[{tag:"Interest rates",title:"What is the Selic Rate?",body:"Brazil's base interest rate. When it rises, Tesouro Selic earns more automatically.",icon:"📊"},{tag:"Tax",title:"How does IOF work?",body:"A tax on short-term gains. After 30 days, IOF drops to zero on your earnings.",icon:"🏛️"},{tag:"Comparison",title:"Why TD beats Poupança",body:"Tesouro tracks the Selic rate (14.75%), while Poupança is capped at ~7%. Even after tax, TD wins.",icon:"⚖️"}].map((c,i)=><div key={i} style={{display:"flex",gap:10,padding:12,background:C.g50,borderRadius:10,marginBottom:8}}><div style={{width:36,height:36,borderRadius:8,background:C.tealPale,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>{c.icon}</div><div style={{flex:1}}><div style={{fontSize:9,fontWeight:600,color:C.teal,textTransform:"uppercase",letterSpacing:.5}}>{c.tag}</div><div style={{fontSize:12,fontWeight:700,color:C.navy,marginTop:1}}>{c.title}</div><div style={{fontSize:10,color:C.g600,lineHeight:1.4,marginTop:2}}>{c.body}</div></div></div>)}</div><div style={{padding:"0 16px",marginBottom:16}}><div style={{fontSize:14,fontWeight:700,color:C.navy,marginBottom:8}}>Financial terms</div><div style={{display:"flex",flexWrap:"wrap",gap:6}}>{["Selic","CDI","IPCA","IOF","Liquidity","CDB","FGC","Mark to market"].map((t,i)=><div key={i} style={{padding:"6px 12px",background:C.g50,border:`1px solid ${C.g100}`,borderRadius:16,fontSize:11,color:C.navy,fontWeight:500,cursor:"pointer"}}>{t}</div>)}</div></div><div style={{padding:"0 16px"}}><div style={{fontSize:14,fontWeight:700,color:C.navy,marginBottom:8}}>Common questions</div>{[{q:"Is Tesouro Direto safe?",a:"Yes — backed by the Federal Government, the safest guarantee in Brazil."},{q:"Why does it earn more than Poupança?",a:"Tracks the Selic rate (14.75% p.a.) vs Poupança's ~7% cap."},{q:"Can I withdraw anytime?",a:"Yes, instant liquidity. Your money is always available."},{q:"What's the minimum?",a:"Just R$ 1. No minimum balance required."}].map((f,i)=><div key={i} style={{padding:"8px 0",borderBottom:i<3?`1px solid ${C.g100}`:"none"}}><div style={{fontSize:11,fontWeight:600,color:C.navy}}>{f.q}</div><div style={{fontSize:10,color:C.g600,lineHeight:1.4,marginTop:2}}>{f.a}</div></div>)}</div><div style={{height:70}}/></div></div>)}
+// ======= INFORMADO HOME =======
+function InfoHome() {
+  return (
+    <div style={{ flex: 1, overflowY: "auto", ...anim }}>
+      <div style={{ padding: "12px 20px 16px" }}>
+        <div style={{ fontSize: 12, color: C.g300 }}>Hi, Carlos 👋</div>
+        <div style={{ background: C.navyMid, border: `1.5px solid ${C.gold}`, borderRadius: 12, padding: "14px 16px", marginTop: 8 }}>
+          <div style={{ fontSize: 11, color: C.g300 }}>Total Tesouro Direto portfolio</div>
+          <div style={{ fontSize: 30, fontWeight: 700, color: C.white, letterSpacing: -1 }}>R$ 45,520.00</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
+            <span style={{ fontSize: 12 }}>📈</span>
+            <span style={{ fontSize: 12, color: C.green, fontWeight: 600 }}>+8.42% real (12 months)</span>
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+          <Btn gold>Invest</Btn>
+          <Btn outline>Withdraw</Btn>
+        </div>
+      </div>
+      <div style={{ background: C.white, borderRadius: "16px 16px 0 0", padding: "16px 0", minHeight: 400 }}>
+        <Cd>
+          <div style={{ fontSize: 13, fontWeight: 700, color: C.navy, marginBottom: 8 }}>Portfolio across channels</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <svg width="100" height="100" viewBox="0 0 42 42">
+              <circle cx="21" cy="21" r="15.9" fill="none" stroke={C.teal} strokeWidth="5" strokeDasharray="40 60" strokeDashoffset="25"/>
+              <circle cx="21" cy="21" r="15.9" fill="none" stroke={C.blue} strokeWidth="5" strokeDasharray="35 65" strokeDashoffset="85"/>
+              <circle cx="21" cy="21" r="15.9" fill="none" stroke={C.gold} strokeWidth="5" strokeDasharray="25 75" strokeDashoffset="50"/>
+            </svg>
+            <div style={{ flex: 1 }}>
+              {[
+                { label: "TD App (direct)", amt: "R$ 18,200", pct: "40%", color: C.teal },
+                { label: "via Nubank", amt: "R$ 15,820", pct: "35%", color: C.blue },
+                { label: "via XP", amt: "R$ 11,500", pct: "25%", color: C.gold },
+              ].map((ch, i) => <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+                <div style={{ width: 8, height: 8, borderRadius: 2, background: ch.color, flexShrink: 0 }}/>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: C.navy }}>{ch.label}</div>
+                  <div style={{ fontSize: 10, color: C.g400 }}>{ch.amt} · {ch.pct}</div>
+                </div>
+              </div>)}
+            </div>
+          </div>
+        </Cd>
+        <Cd>
+          <div style={{ fontSize: 13, fontWeight: 700, color: C.navy, marginBottom: 6 }}>12-month real returns</div>
+          {[
+            { l: "Tesouro Reserva", v: "+8.42%", c: C.teal, w: "90%" },
+            { l: "CDB 100% CDI", v: "+5.18%", c: C.blue, w: "65%" },
+            { l: "Nubank Caixinha", v: "+4.80%", c: C.gold, w: "60%" },
+            { l: "Poupança", v: "−2.40%", c: C.g300, w: "20%" },
+          ].map((b, i) => <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 5 }}>
+            <div style={{ width: 80, fontSize: 10, color: C.g600, textAlign: "right" }}>{b.l}</div>
+            <div style={{ flex: 1, height: 14, background: C.g100, borderRadius: 3, overflow: "hidden" }}><div style={{ height: "100%", width: b.w, background: b.c, borderRadius: 3 }}/></div>
+            <div style={{ width: 48, fontSize: 10, fontWeight: 700, color: b.c, textAlign: "right" }}>{b.v}</div>
+          </div>)}
+          <div style={{ fontSize: 8, color: C.g400, textAlign: "center", marginTop: 4 }}>Real values · After tax · Last 12 months</div>
+        </Cd>
+        <Cd style={{ background: C.tealPale, border: "1px solid rgba(0,180,160,.12)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ fontSize: 16 }}>💡</span>
+            <div style={{ fontSize: 12, fontWeight: 700, color: C.navy }}>Opportunity detected</div>
+          </div>
+          <div style={{ fontSize: 11, color: C.g600, lineHeight: 1.4, marginTop: 4 }}>Your Nubank account has R$ 890 surplus. Investing R$ 400 would earn ~R$ 4.70/mo at current Selic.</div>
+          <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+            <div style={{ flex: 1 }}><Btn>Invest R$ 400</Btn></div>
+            <div style={{ padding: "10px 12px", fontSize: 12, color: C.g400, cursor: "pointer" }}>Not now</div>
+          </div>
+        </Cd>
+        <div style={{ height: 70 }}/>
+      </div>
+    </div>
+  );
+}
 
-function App(){const[seg,setSeg]=useState(null);const[welcomed,setWelcomed]=useState(false);const[tab,setTab]=useState("home");const isInit=seg==="init";const navItems=[{id:"home",label:"Home",icon:"🏠"},{id:"boxes",label:isInit?"Goals":"Portfolio",icon:"🎯"},{id:"learn",label:"Learn",icon:"📚"}];return(<div style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"24px 16px",fontFamily:"-apple-system,'Helvetica Neue',sans-serif",background:"#E8EBF0",minHeight:"100vh"}}><div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16,flexWrap:"wrap",justifyContent:"center"}}><div style={{fontSize:16,fontWeight:700,color:C.navy}}>Tesouro Direto — Prototype</div>{seg&&<span style={{padding:"3px 10px",background:isInit?C.tealPale:"#E6F1FB",borderRadius:12,fontSize:11,fontWeight:600,color:isInit?C.teal:C.blue}}>{isInit?"Beginner":"Informed"}</span>}{seg&&<span onClick={()=>{setSeg(null);setWelcomed(false);setTab("home")}} style={{fontSize:11,color:C.teal,cursor:"pointer",fontWeight:600}}>← Restart</span>}</div><Phone><Bar/>{!seg?<Onboarding onDone={s=>{setSeg(s);setWelcomed(false);setTab("home")}}/>:!welcomed?<Welcome seg={seg} onContinue={()=>setWelcomed(true)}/>:<>{tab==="home"&&(isInit?<InitHome/>:<InfoHome/>)}{tab==="boxes"&&<Boxes seg={seg}/>}{tab==="learn"&&<Learn/>}<Nav active={tab} onNav={setTab} items={navItems}/></>}</Phone>{!seg&&<div style={{fontSize:11,color:C.g400,marginTop:12}}>Answer 3 questions to see the personalized experience</div>}</div>)}
+// ======= TREASURY BOXES / GOALS =======
+function Boxes({ seg }) {
+  const isInit = seg === "init";
+  const boxes = isInit ? [
+    { name: "Trip to Bahia", emoji: "🏖️", bg: "#FFF5E6", goal: 3000, cur: 1860, auto: 150, pct: 62, days: "~8 mo", color: C.teal },
+    { name: "Emergency Fund", emoji: "🚨", bg: "#FFE8E8", goal: 5000, cur: 1912, auto: 200, pct: 38, days: "~15 mo", color: C.orange },
+    { name: "English Course", emoji: "🎓", bg: "#E8F4FF", goal: 1500, cur: 1275, auto: 100, pct: 85, days: "~2 mo", color: C.green },
+  ] : [
+    { name: "Emergency Fund", emoji: "🚨", bond: "Tesouro Selic", yield: "14.75% p.a.", goal: 15000, cur: 8420, pct: 56, color: C.teal },
+    { name: "IPCA+ 2029", emoji: "📊", bond: "IPCA+ 2029", yield: "IPCA+6.8%", goal: 50000, cur: 22300, pct: 45, color: C.blue },
+    { name: "Europe Trip", emoji: "✈️", bond: "Tesouro Selic", yield: "14.75% p.a.", goal: 20000, cur: 14800, pct: 74, color: C.green },
+  ];
+  return (
+    <div style={{ flex: 1, overflowY: "auto", ...anim }}>
+      <div style={{ padding: "8px 20px 10px" }}><div style={{ fontSize: 12, color: C.g300 }}>{isInit ? "Your goals · earning every day" : "Your allocations"}</div></div>
+      <div style={{ background: C.white, borderRadius: "16px 16px 0 0", padding: "12px 16px", minHeight: 400 }}>
+        {boxes.map((b, i) => <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: 12, border: `1px solid ${C.g100}`, borderRadius: 12, marginBottom: 8 }}>
+          <div style={{ width: 38, height: 38, borderRadius: 10, background: b.bg || C.g50, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>{b.emoji}</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ fontSize: 12, fontWeight: 600, color: C.navy }}>{b.name}</span>
+              <span style={{ fontSize: 9, fontWeight: 600, color: b.color }}>{b.days || b.yield}</span>
+            </div>
+            {isInit ? <div style={{ fontSize: 9, color: C.g400 }}>Goal: R$ {b.goal.toLocaleString()} · Auto: R$ {b.auto}/mo</div>
+              : <div style={{ fontSize: 9, color: C.g400 }}>{b.bond} · Goal: R$ {b.goal.toLocaleString()}</div>}
+            <div style={{ height: 3, background: C.g100, borderRadius: 2, marginTop: 5, overflow: "hidden" }}><div style={{ height: "100%", width: `${b.pct}%`, background: b.color, borderRadius: 2 }}/></div>
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 2 }}>
+              <span style={{ fontSize: 11, fontWeight: 600, color: C.navy }}>R$ {b.cur.toLocaleString()}</span>
+              <span style={{ fontSize: 10, color: C.g400 }}>{b.pct}%</span>
+            </div>
+          </div>
+        </div>)}
+        <div style={{ padding: 12, border: `2px dashed ${C.g200}`, borderRadius: 12, fontSize: 12, fontWeight: 600, color: C.teal, textAlign: "center", cursor: "pointer" }}>+ Create new {isInit ? "goal" : "allocation"}</div>
+        <div style={{ height: 70 }}/>
+      </div>
+    </div>
+  );
+}
+
+// ======= LEARN CENTER (single visual page) =======
+function Learn() {
+  return (
+    <div style={{ flex: 1, overflowY: "auto", ...anim }}>
+      <div style={{ padding: "8px 20px 10px" }}><div style={{ fontSize: 14, fontWeight: 700, color: C.white }}>Learning Center</div></div>
+      <div style={{ background: C.white, borderRadius: "16px 16px 0 0", padding: "16px 0", minHeight: 400 }}>
+
+        {/* Featured videos */}
+        <div style={{ padding: "0 16px", marginBottom: 16 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, marginBottom: 8 }}>Watch & learn</div>
+          <div style={{ display: "flex", gap: 8, overflowX: "auto" }}>
+            {[
+              { title: "What is Tesouro Direto?", author: "Primo Rico", dur: "4:32", color: "#1a1a2e" },
+              { title: "TD vs Poupança explained", author: "Nath Finanças", dur: "3:15", color: "#162447" },
+              { title: "How the Selic Rate works", author: "Me Poupe!", dur: "5:08", color: "#1b2838" },
+            ].map((v, i) => <div key={i} style={{ minWidth: 150, borderRadius: 10, overflow: "hidden", flexShrink: 0, cursor: "pointer" }}>
+              <div style={{ height: 85, background: v.color, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                <div style={{ width: 32, height: 32, borderRadius: 16, background: "rgba(255,255,255,.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <div style={{ width: 0, height: 0, borderLeft: "10px solid white", borderTop: "6px solid transparent", borderBottom: "6px solid transparent", marginLeft: 2 }}/>
+                </div>
+                <div style={{ position: "absolute", bottom: 4, right: 6, fontSize: 9, color: C.white, background: "rgba(0,0,0,.6)", padding: "1px 4px", borderRadius: 3 }}>{v.dur}</div>
+              </div>
+              <div style={{ padding: "6px 8px", background: C.g50 }}>
+                <div style={{ fontSize: 10, fontWeight: 600, color: C.navy, lineHeight: 1.3 }}>{v.title}</div>
+                <div style={{ fontSize: 9, color: C.g400, marginTop: 2 }}>{v.author}</div>
+              </div>
+            </div>)}
+          </div>
+        </div>
+
+        {/* Quick concept cards */}
+        <div style={{ padding: "0 16px", marginBottom: 16 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, marginBottom: 8 }}>30-second concepts</div>
+          {[
+            { tag: "Interest rates", title: "What is the Selic Rate?", body: "Brazil's base interest rate. When it rises, Tesouro Selic earns more automatically.", icon: "📊" },
+            { tag: "Tax", title: "How does IOF work?", body: "A tax on short-term gains. After 30 days, IOF drops to zero on your earnings.", icon: "🏛️" },
+            { tag: "Comparison", title: "Why TD beats Poupança", body: "Tesouro tracks the Selic rate (14.75%), while Poupança is capped at ~7%. Even after tax, TD wins.", icon: "⚖️" },
+          ].map((c, i) => <div key={i} style={{ display: "flex", gap: 10, padding: 12, background: C.g50, borderRadius: 10, marginBottom: 8 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 8, background: C.tealPale, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, flexShrink: 0 }}>{c.icon}</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 9, fontWeight: 600, color: C.teal, textTransform: "uppercase", letterSpacing: .5 }}>{c.tag}</div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: C.navy, marginTop: 1 }}>{c.title}</div>
+              <div style={{ fontSize: 10, color: C.g600, lineHeight: 1.4, marginTop: 2 }}>{c.body}</div>
+            </div>
+          </div>)}
+        </div>
+
+        {/* Glossary - compact */}
+        <div style={{ padding: "0 16px", marginBottom: 16 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, marginBottom: 8 }}>Financial terms</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            {["Selic", "CDI", "IPCA", "IOF", "Liquidity", "CDB", "FGC", "Mark to market"].map((t, i) => <div key={i} style={{ padding: "6px 12px", background: C.g50, border: `1px solid ${C.g100}`, borderRadius: 16, fontSize: 11, color: C.navy, fontWeight: 500, cursor: "pointer" }}>{t}</div>)}
+          </div>
+        </div>
+
+        {/* FAQ */}
+        <div style={{ padding: "0 16px" }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, marginBottom: 8 }}>Common questions</div>
+          {[
+            { q: "Is Tesouro Direto safe?", a: "Yes — backed by the Federal Government, the safest guarantee in Brazil." },
+            { q: "Why does it earn more than Poupança?", a: "Tracks the Selic rate (14.75% p.a.) vs Poupança's ~7% cap." },
+            { q: "Can I withdraw anytime?", a: "Yes, instant liquidity. Your money is always available." },
+            { q: "What's the minimum?", a: "Just R$ 1. No minimum balance required." },
+          ].map((f, i) => <div key={i} style={{ padding: "8px 0", borderBottom: i < 3 ? `1px solid ${C.g100}` : "none" }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: C.navy }}>{f.q}</div>
+            <div style={{ fontSize: 10, color: C.g600, lineHeight: 1.4, marginTop: 2 }}>{f.a}</div>
+          </div>)}
+        </div>
+
+        <div style={{ height: 70 }}/>
+      </div>
+    </div>
+  );
+}
+
+// ======= MAIN =======
+function App() {
+  const [seg, setSeg] = useState(null);
+  const [welcomed, setWelcomed] = useState(false);
+  const [tab, setTab] = useState("home");
+
+  const isInit = seg === "init";
+  const navItems = [
+    { id: "home", label: "Home", icon: "🏠" },
+    { id: "boxes", label: isInit ? "Goals" : "Portfolio", icon: "🎯" },
+    { id: "learn", label: "Learn", icon: "📚" },
+  ];
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "24px 16px", fontFamily: "-apple-system, 'Helvetica Neue', sans-serif", background: "#E8EBF0", minHeight: "100vh" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16, flexWrap: "wrap", justifyContent: "center" }}>
+        <div style={{ fontSize: 16, fontWeight: 700, color: C.navy }}>Tesouro Direto — Prototype</div>
+        {seg && <span style={{ padding: "3px 10px", background: isInit ? C.tealPale : "#E6F1FB", borderRadius: 12, fontSize: 11, fontWeight: 600, color: isInit ? C.teal : C.blue }}>{isInit ? "Beginner" : "Informed"}</span>}
+        {seg && <span onClick={() => { setSeg(null); setWelcomed(false); setTab("home"); }} style={{ fontSize: 11, color: C.teal, cursor: "pointer", fontWeight: 600 }}>← Restart</span>}
+      </div>
+      <Phone>
+        <Bar />
+        {!seg ? <Onboarding onDone={s => { setSeg(s); setWelcomed(false); setTab("home"); }} />
+        : !welcomed ? <Welcome seg={seg} onContinue={() => setWelcomed(true)} />
+        : <>
+          {tab === "home" && (isInit ? <InitHome /> : <InfoHome />)}
+          {tab === "boxes" && <Boxes seg={seg} />}
+          {tab === "learn" && <Learn />}
+          <Nav active={tab} onNav={setTab} items={navItems} />
+        </>}
+      </Phone>
+      {!seg && <div style={{ fontSize: 11, color: C.g400, marginTop: 12 }}>Answer 3 questions to see the personalized experience</div>}
+    </div>
+  );
+}
 
 ReactDOM.render(<App/>, document.getElementById('root'));
 </script>
